@@ -12,6 +12,7 @@ coffee_size = ['small', 'large', 'medium']
 customers = ['aine', 'bernard', 'charline', 'denise', 'esteban', 'françois', 'geraldine', 'herbert']
 
 http = Net::HTTP.new(uri.host, uri.port)
+http.read_timeout = 600
 
 2.times do
   3.times do
