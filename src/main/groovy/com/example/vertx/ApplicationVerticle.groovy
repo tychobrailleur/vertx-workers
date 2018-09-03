@@ -1,18 +1,18 @@
 package com.example.vertx
 
-import io.vertx.core.Vertx
 import io.vertx.config.ConfigRetriever
-import io.vertx.config.ConfigStoreOptions
 import io.vertx.config.ConfigRetrieverOptions
-import io.vertx.core.logging.LoggerFactory
-import io.vertx.core.json.JsonObject
+import io.vertx.config.ConfigStoreOptions
+import io.vertx.core.AbstractVerticle
 import io.vertx.core.DeploymentOptions
+import io.vertx.core.json.JsonObject
+import io.vertx.core.logging.LoggerFactory
 
-class Application {
+class ApplicationVerticle extends AbstractVerticle {
 
-    public static void main(String[] args) {
+    @Override
+    public void start() {
         def log = LoggerFactory.getLogger(this.class)
-        def vertx = Vertx.vertx()
 
         ConfigStoreOptions fileStore = new ConfigStoreOptions()
             .setType("file")
@@ -25,17 +25,17 @@ class Application {
             .addStore(fileStore)
             .addStore(sysPropsStore)
 
-        ConfigRetriever retriever = ConfigRetriever.create(vertx, options)
+        ConfigRetriever retriever = ConfigRetriever.create(this.@vertx, options)
 
         retriever.getConfig({ json ->
             if (json.succeeded()) {
                 JsonObject config = json.result()
                 log.debug("Starting the app with config: ${json}")
-                vertx.deployVerticle('groovy:com.example.vertx.MainVerticle', new DeploymentOptions()
+                this.@vertx.deployVerticle('groovy:com.example.vertx.MainVerticle', new DeploymentOptions()
                     .setConfig(config)
                     .setInstances(5)
                 )
-                vertx.deployVerticle('groovy:com.example.vertx.WorkerVerticle', new DeploymentOptions()
+                this.@vertx.deployVerticle('groovy:com.example.vertx.WorkerVerticle', new DeploymentOptions()
                     .setConfig(config)
                     .setWorkerPoolName("coffee-making-pool")
                     .setWorkerPoolSize(5)
