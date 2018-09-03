@@ -10,6 +10,7 @@ import io.vertx.core.logging.LoggerFactory
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import io.vertx.reactivex.core.AbstractVerticle
+import io.vertx.reactivex.core.Vertx
 import io.vertx.reactivex.core.buffer.Buffer
 import io.vertx.reactivex.core.eventbus.Message
 
@@ -20,11 +21,11 @@ class MainVerticle extends AbstractVerticle {
     void start(Future<Void> future) {
         JsonObject config = config()
         int port = config.getInteger('http.port', 8085)
-        log.info("Starting MainVerticle on port ${port}")
+        log.info("Starting MainVerticle on port ${port} context = ${Vertx.currentContext()}")
 
         def server = this.@vertx.createHttpServer()
         server.requestStream().toFlowable().subscribe({ request ->
-            log.info("Received incoming request. instance = ${this}")
+            log.info("Received incoming request. instance = ${this} context = ${Vertx.currentContext()}")
             def response = request.response()
             response.setChunked(true)
             response.putHeader("Content-Type", "application/json")
@@ -67,8 +68,8 @@ class MainVerticle extends AbstractVerticle {
 
                 future.complete(new Buffer(responseMessage.toBuffer()))
             } as Consumer)
-        } as io.vertx.core.Handler).subscribe({ res ->
-            log.info("Received response: ${res}")
+        } as io.vertx.core.Handler, false).subscribe({ res ->
+            log.info("Received response: ${res} context = ${Vertx.currentContext()}")
             response.end(res)
         } as Consumer)
     }
