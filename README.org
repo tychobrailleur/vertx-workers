@@ -39,6 +39,15 @@ ruby process_messages.rb
   The script sends 2 batches of 3 random coffee orders to the HTTP
   [[http://localhost:8085/coffee][http://localhost:8085/coffee]] endpoint.
 
+** Maven
+
+   Another way of running the example is to use the Vert.x maven
+   plugin:
+
+#+BEGIN_SRC bash
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+#+END_SRC
+
 * License
 
 Apache License, version 2.0.
