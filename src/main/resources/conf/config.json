@@ -1,4 +1,4 @@
 {
   "http.port": 8085,
-  "workers": 2
+  "workers": 5
 }
